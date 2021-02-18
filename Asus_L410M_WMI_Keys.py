@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------#
-# Filename:  Asus_L410M_WMI_Keys.py                              /          \  #
+# Filename: Asus_L410M_WMI_Keys.py                               /          \  #
 # Project : Asus_L410M_WMI_Keys                                 |     ()     | #
 # Date    : 02/17/2021                                          |            | #
 # Author  : Dana Hynes                                          |   \____/   | #
@@ -71,8 +71,7 @@ while True:
             # toggle the camera state
             cam_state = not cam_state
             # get the proper file for the cam
-            cam_file = open("/sys/bus/usb/devices/" + cam_id +
-                "/bConfigurationValue", "w+")
+            cam_file = open("/sys/bus/usb/devices/" + cam_id + "/bConfigurationValue", "w+")
             # turn cam on
             if cam_state:
                 cam_file.write("1")
@@ -87,28 +86,22 @@ while True:
         elif e.value == KEY_WMI_MYASUS:
             try:
                 # press Shift
-                events = [InputEvent(EV_KEY.KEY_LEFTSHIFT, 1),
-                    InputEvent(EV_SYN.SYN_REPORT, 0)]
+                events = [InputEvent(EV_KEY.KEY_LEFTSHIFT, 1), InputEvent(EV_SYN.SYN_REPORT, 0)]
                 fake_kbd.send_events(events)
                 # press Cmd
-                events = [InputEvent(EV_KEY.KEY_LEFTMETA, 1),
-                    InputEvent(EV_SYN.SYN_REPORT, 0)]
+                events = [InputEvent(EV_KEY.KEY_LEFTMETA, 1), InputEvent(EV_SYN.SYN_REPORT, 0)]
                 fake_kbd.send_events(events)
                 # press T
-                events = [InputEvent(EV_KEY.KEY_T, 1),
-                    InputEvent(EV_SYN.SYN_REPORT, 0)]
+                events = [InputEvent(EV_KEY.KEY_T, 1), InputEvent(EV_SYN.SYN_REPORT, 0)]
                 fake_kbd.send_events(events)
                 # release T
-                events = [InputEvent(EV_KEY.KEY_T, 0),
-                    InputEvent(EV_SYN.SYN_REPORT, 0)]
+                events = [InputEvent(EV_KEY.KEY_T, 0), InputEvent(EV_SYN.SYN_REPORT, 0)]
                 fake_kbd.send_events(events)
                 # release Cmd
-                events = [InputEvent(EV_KEY.KEY_LEFTMETA, 0),
-                    InputEvent(EV_SYN.SYN_REPORT, 0)]
+                events = [InputEvent(EV_KEY.KEY_LEFTMETA, 0), InputEvent(EV_SYN.SYN_REPORT, 0)]
                 fake_kbd.send_events(events)
                 # release Shift
-                events = [InputEvent(EV_KEY.KEY_LEFTSHIFT, 0),
-                    InputEvent(EV_SYN.SYN_REPORT, 0)]
+                events = [InputEvent(EV_KEY.KEY_LEFTSHIFT, 0), InputEvent(EV_SYN.SYN_REPORT, 0)]
                 fake_kbd.send_events(events)
             except OSError as e:
                 pass
