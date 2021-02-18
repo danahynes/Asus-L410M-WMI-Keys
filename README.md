@@ -17,12 +17,17 @@ To install, clone the git repo:
 ```
 foo@bar:~$ cd ~/Downloads
 foo@bar:~$ git clone https://github.com/danahynes/Asus_L410M_WMI_Keys.git
-foo@bar:~$ cd Asus_L410M-WMI-keys
+foo@bar:~$ cd Asus_L410M_WMI_keys
+```
+
+You WILL need to find the cam_id and the key scancodes before you install. See note below!
+Once you do that, you can install by:
+```
 foo@bar:~$ sudo ./install.sh
 ```
-You can also download the [latest release](http://github.com/danahynes/Asus_L410M_WMI_Keys/releases)
+You can also download the [latest release](http://github.com/danahynes/Asus_L410M_WMI_Keys/releases), unzip it, set the cam_id and scancodes, and run the install.sh file from there.
 
-## Some notes
+# Finding the cam_id and KEY_WMI_* values
 
 Finding the cam_id is a little hard. Lets start with:
 ```
@@ -243,5 +248,7 @@ where the you should find this in the output:
 
 In this case scancode 85 is my camera key.
 Note that these are hex values so the camera key becomes 133.
+
+Use these values in Asus_L410M_WMI_Keys.py to fire events for your unused keys. Also if you have other keys that don't work, and you know python, you can map more keys to more functions.
 
 # -)
