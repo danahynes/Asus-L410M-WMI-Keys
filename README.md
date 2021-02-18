@@ -25,7 +25,7 @@ Once you do that, you can install by:
 ```
 foo@bar:~$ sudo ./install.sh
 ```
-You can also download the [latest release](http://github.com/danahynes/Asus_L410M_WMI_Keys/releases), unzip it, set the cam_id and scancodesin Asus_L410M_WMI_Keys.py, and run the install.sh file from there.
+You can also download the [latest release](http://github.com/danahynes/Asus_L410M_WMI_Keys/releases), unzip it, set the cam_id and scancodes in Asus_L410M_WMI_Keys.py, and run the install.sh file from there.
 
 # Finding the cam_id and KEY_WMI_* values
 
@@ -233,6 +233,8 @@ and you should get only one result:
 ```
 As you can see, the numbers before the slash ("1-5") match one of the vendor entries, so your cam_id should be "1-5".
 
+I'm currently working on a way to automate this detection, but it's not really a priority since the camera doesn't seem to change between reboots for me like the wmi keyboard does.
+
 And here's how to find the KEY_WMI_* values for the keys you want to map:
 
 Press the key you want to map a few times, then do this:
@@ -247,7 +249,7 @@ where the you should find this in the output:
 ```
 
 In this case scancode 85 is my camera key.
-Note that these are hex values so the camera key becomes 133.
+Note that these are hex values so the camera key 0x85 becomes 133 decimal.
 
 Use these values in Asus_L410M_WMI_Keys.py to fire events for your unused keys. Also if you have other keys that don't work, and you know python, you can map more keys to more functions.
 
