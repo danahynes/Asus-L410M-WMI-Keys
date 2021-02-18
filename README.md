@@ -15,7 +15,7 @@ I banged my head against a wall for a few hours until I found a solution to this
 
 For the camera key, I am "poking" a value into a file that the camera watches to see if it should be enabled.
 
-Note that this is NOT a one-to-one hardware switch for the webcam. It will turn the webcam off if you're using an app that is using the webcam, but it won't turn back on if the app is still running. Also if you do use the key while the camera is in use, there is an issue where the system file gets out of sync (I believe the app has a lock on the file) and you may have to press the button a few times with all apps closed to re-sync it. I'm working on it, but for now, "it mostly works".
+Note that this is NOT a one-to-one hardware switch for the webcam. It will turn the webcam off if you're using an app that is using the webcam, but it won't turn back on if the app is still running. Also if you do use the key while the camera is in use, there is an issue where the system file gets out of sync (I believe the app has a lock on the file) and you may have to press the button a few times with all apps closed to re-sync it. Also, there is no indicator for whether the cam is currently on or off. I'm working on it, but for now, "it mostly works".
 
 As for the "MyAsus" key, it presents itself as Shift-Meta-T. You should be able to map it to something useful using your system's keyboard shortcuts. I'm currently using it to launch Chromium and it works perfectly.
 
