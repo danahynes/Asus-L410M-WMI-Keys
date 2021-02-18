@@ -7,9 +7,9 @@ I banged my head against a wall for a few hours until I found a solution to this
 
 For the camera key, I am "poking" a value into a file that the camera watches to see if it should be enabled.
 
-Note that this is NOT a one-to-one hardware switch for the webcam. It will turn the webcam off if you're using an app that is using the webcam, but it won't turn back on if the app is still running. Also if you do use the key while the camera is in use, there is an issue where the system file gets out of sync (I believe the app has a lock on the file) and you may have to press the button a few times with all apps closed to re-sync it.
+Note that this is NOT a one-to-one hardware switch for the webcam. It will turn the webcam off if you're using an app that is using the webcam, but it won't turn back on if the app is still running. Also if you do use the key while the camera is in use, there is an issue where the system file gets out of sync (I believe the app has a lock on the file) and you may have to press the button a few times with all apps closed to re-sync it. I'm working on it, but for now, "it mostly works".
 
-As for the "MyAsus" key, it presents itself as Shift-Cmd-T. You should be able to map it to something useful using your system's keyboard shortcuts.
+As for the "MyAsus" key, it presents itself as Shift-Meta-T. You should be able to map it to something useful using your system's keyboard shortcuts. I'm currently using it to launch Chromium and it works perfectly.
 
 # Installing
 
@@ -20,12 +20,12 @@ foo@bar:~$ git clone https://github.com/danahynes/Asus_L410M_WMI_Keys.git
 foo@bar:~$ cd Asus_L410M_WMI_keys
 ```
 
-You WILL need to find the cam_id and the key scancodes before you install. See note below!
+You WILL need to find the cam_id and the key scancodes and edit Asus_L410M_WMI_Keys.py before you install. See note below!
 Once you do that, you can install by:
 ```
 foo@bar:~$ sudo ./install.sh
 ```
-You can also download the [latest release](http://github.com/danahynes/Asus_L410M_WMI_Keys/releases), unzip it, set the cam_id and scancodes, and run the install.sh file from there.
+You can also download the [latest release](http://github.com/danahynes/Asus_L410M_WMI_Keys/releases), unzip it, set the cam_id and scancodesin Asus_L410M_WMI_Keys.py, and run the install.sh file from there.
 
 # Finding the cam_id and KEY_WMI_* values
 
