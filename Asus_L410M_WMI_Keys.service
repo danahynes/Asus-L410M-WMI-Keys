@@ -1,0 +1,11 @@
+[Unit]
+Description=Asus L410M WMI Key Handler
+After=display-manager.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/bin/Asus_L410M_WMI_Keys.py
+TimeoutSec=5
+
+[Install]
+WantedBy=default.target
