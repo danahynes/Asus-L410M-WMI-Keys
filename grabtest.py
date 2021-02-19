@@ -33,9 +33,9 @@ with open('/proc/bus/input/devices', 'r') as f:
             # print(part)
             # parts = part.split("input")
             # print(parts[1])
+            
             list = []
             for file in os.listdir("/sys/bus/usb/devices/"):
-                #print(file)
                 newfile = "/sys/bus/usb/devices/" + file + "/idVendor"
                 if os.path.exists(newfile):
                     with open(newfile, "r") as f2:
@@ -43,8 +43,7 @@ with open('/proc/bus/input/devices', 'r') as f:
                         for line2 in lines2:
                             if re.search(vendor, line2):
                                 list.append(file)
-                                #print("found: " + line2)
-            print(list)
+
             list2 = []
             for file in list:
                 newfile = "/sys/bus/usb/devices/" + file + "/idProduct"
@@ -54,6 +53,9 @@ with open('/proc/bus/input/devices', 'r') as f:
                         for line2 in lines2:
                             if re.search(product, line2):
                                 list2.append(file)
+
+
+
             print(list2)               #
                 # res = subprocess.Popen(['grep', vendor, newfile], stdout= subprocess.PIPE)
                 # print("res: " + str(res))
