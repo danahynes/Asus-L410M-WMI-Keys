@@ -6,7 +6,7 @@
 <!-- License : WTFPLv2                                         \          /  -->
 <!----------------------------------------------------------------------------->
 
-# Asus_L410M_WMI_Keys 
+# Asus_L410M_WMI_Keys
 This small program runs at boot and gives you access to the keys on the keyboard that aren't handled by the current asus-nb-wmi driver.
 
 On my laptop (a 2020 Asus L410M) these are the camera toggle key (same as F10) and the "Launch MyAsus" key (same as F12).
