@@ -9,12 +9,11 @@
 #imports
 from fcntl import fcntl, F_SETFL
 from libevdev import Device, InputEvent, EV_KEY, EV_SYN
-from os import O_NONBLOCK
+import os
+import re
 from time import sleep
 
 # constants
-# TODO: find camera id by https://askubuntu.com/questions/166809/how-can-i-disable-my-webcam
-cam_id = "1-5"
 # TODO: find an easier way to get these besides dmesg
 KEY_WMI_CAMERA = 133
 KEY_WMI_MYASUS = 134
@@ -60,7 +59,7 @@ with open('/proc/bus/input/devices', 'r') as f:
                         for line2 in lines2:
                             if re.search(product, line2):
                                 list2.append(file)
-                                
+
 # garb the (hopefully) only matchng vendor/product
 cam_id = list2[0]
 
@@ -99,7 +98,7 @@ fake_kbd = dev.create_uinput_device()
 # create a file descriptor (pipe) for the WMI keyboard
 fd_wmi_kbd = open('/dev/input/event' + str(wmi_kbd_id), 'rb')
 # set file descriptor (pipe) to non-blocking
-fcntl(fd_wmi_kbd, F_SETFL, O_NONBLOCK)
+fcntl(fd_wmi_kbd, F_SETFL, os.O_NONBLOCK)
 # get a device object (end point) for the file descriptor (pipe)
 wmi_kbd = Device(fd_wmi_kbd)
 # prevent the keys from sending their unmapped (0x0) codes to the system
