@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------#
-# Filename: Asus_L410M_WMI_Keys.service                          /          \  #
+# Filename: asus_l410m_wmi_keys.service                          /          \  #
 # Project : Asus_L410M_WMI_Keys                                 |     ()     | #
 # Date    : 02/17/2021                                          |            | #
 # Author  : Dana Hynes                                          |   \____/   | #
@@ -7,12 +7,12 @@
 #------------------------------------------------------------------------------#
 
 [Unit]
-Description=Asus L410M WMI Key Handler
+Description=Asus L410M WMI Keys (http://github.com/danahynes/Asus_L410M_WMI_Keys)
 After=display-manager.service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 /usr/bin/Asus_L410M_WMI_Keys.py
+ExecStart=/usr/bin/python3 /usr/bin/asus_l410m_wmi_keys.py
 TimeoutSec=5
 
 [Install]

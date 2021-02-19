@@ -7,9 +7,12 @@
 # License : WTFPLv2                                              \          /  #
 #------------------------------------------------------------------------------#
 
-sudo cp ./Asus_L410M_WMI_Keys.py /usr/bin
-sudo cp ./Asus_L410M_WMI_Keys.service /lib/systemd/system/
-sudo systemctl start Asus_L410M_WMI_Keys
-sudo systemctl enable Asus_L410M_WMI_Keys
+# copy files to location
+sudo cp ./asus_l410m_wmi_keys.py /usr/bin
+sudo cp ./asus_l410m_wmi_keys.service /lib/systemd/system/
+
+# start service now and on reboot
+sudo systemctl start asus_l410m_wmi_keys
+sudo systemctl enable asus_l410m_wmi_keys
 
 # -)
