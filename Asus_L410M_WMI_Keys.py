@@ -19,6 +19,51 @@ cam_id = "1-5"
 KEY_WMI_CAMERA = 133
 KEY_WMI_MYASUS = 134
 
+# get cam_id
+cam_id = -1
+with open('/proc/bus/input/devices', 'r') as f:
+    webcam_found = False
+    lines = f.readlines()
+    # walk through the file backward (vendor and product come before the name)
+    for line in reversed(lines):
+        if "WEBCAM" in line.upper():
+            webcam_found = True
+            continue
+        if webcam_found:
+            webcam_found = False
+            parts = line.split(" ")
+            vendor = parts[2]
+            vendor = vendor.split("=")
+            vendor = vendor[1]
+            product = parts[3]
+            product = product.split("=")
+            product = product[1]
+
+            # find all matching vendors
+            list = []
+            for file in os.listdir("/sys/bus/usb/devices/"):
+                newfile = "/sys/bus/usb/devices/" + file + "/idVendor"
+                if os.path.exists(newfile):
+                    with open(newfile, "r") as f2:
+                        lines2 = f2.readlines()
+                        for line2 in lines2:
+                            if re.search(vendor, line2):
+                                list.append(file)
+
+            # find all matching products
+            list2 = []
+            for file in list:
+                newfile = "/sys/bus/usb/devices/" + file + "/idProduct"
+                if os.path.exists(newfile):
+                    with open(newfile, "r") as f2:
+                        lines2 = f2.readlines()
+                        for line2 in lines2:
+                            if re.search(product, line2):
+                                list2.append(file)
+                                
+# garb the (hopefully) only matchng vendor/product
+cam_id = list2[0]
+
 # get current cam state
 cam_state = False
 with open("/sys/bus/usb/devices/" + cam_id + "/bConfigurationValue", "r") as f:
@@ -68,19 +113,22 @@ while True:
 
         # if it's the camera key
         if e.value == KEY_WMI_CAMERA:
-            # toggle the camera state
-            cam_state = not cam_state
-            # get the proper file for the cam
-            cam_file = open("/sys/bus/usb/devices/" + cam_id + "/bConfigurationValue", "w+")
-            # turn cam on
-            if cam_state:
-                cam_file.write("1")
-            # turn cam off
-            else:
-                cam_file.write("0")
-            # done with cam file
-            cam_file.flush()
-            cam_file.close()
+
+            # if we found the camera
+            if cam_id != -1:
+                # toggle the camera state
+                cam_state = not cam_state
+                # get the proper file for the cam
+                cam_file = open("/sys/bus/usb/devices/" + cam_id + "/bConfigurationValue", "w+")
+                # turn cam on
+                if cam_state:
+                    cam_file.write("1")
+                # turn cam off
+                else:
+                    cam_file.write("0")
+                # done with cam file
+                cam_file.flush()
+                cam_file.close()
 
         # if it's the "MyAsus" key
         elif e.value == KEY_WMI_MYASUS:
