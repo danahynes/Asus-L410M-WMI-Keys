@@ -72,7 +72,6 @@ Use these values in asus_l410m_wmi_keys.py to fire events for your unused keys. 
 
 # TODO
 
-1. a LOT more checks to see if files exist
 1. more error checking
 1. camera file lock checking/syncing
 1. camera status indicator

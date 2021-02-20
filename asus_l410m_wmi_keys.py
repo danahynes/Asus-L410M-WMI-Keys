@@ -20,34 +20,35 @@ KEY_WMI_MYASUS = 134
 
 # get cam vendor/product id
 webcam_found = False
-with open('/proc/bus/input/devices', 'r') as f:
-    lines = f.readlines()
+if os.path.exists('/proc/bus/input/devices'):
+    with open('/proc/bus/input/devices', 'r') as f:
+        lines = f.readlines()
 
-    # walk through the file backward (vendor and product come before the name)
-    for line in reversed(lines):
-        if "WEBCAM" in line.upper():
-            webcam_found = True
-            continue
-        if webcam_found:
-            parts = line.split(" ")
-            vendor = parts[2]
-            vendor = vendor.split("=")
-            vendor = vendor[1]
-            product = parts[3]
-            product = product.split("=")
-            product = product[1]
-            break
+        # walk through the file backward (vendor and product come before the name)
+        for line in reversed(lines):
+            if 'WEBCAM' in line.upper():
+                webcam_found = True
+                continue
+            if webcam_found:
+                parts = line.split(' ')
+                vendor = parts[2]
+                vendor = vendor.split('=')
+                vendor = vendor[1]
+                product = parts[3]
+                product = product.split('=')
+                product = product[1]
+                break
 
 # get cam bus/device
 if webcam_found:
 
     # find all matching vendors
     vendor_list = []
-    possible_ids = os.listdir("/sys/bus/usb/devices/")
+    possible_ids = os.listdir('/sys/bus/usb/devices/')
     for id in possible_ids:
-        newfile = "/sys/bus/usb/devices/" + id + "/idVendor"
+        newfile = '/sys/bus/usb/devices/' + id + '/idVendor'
         if os.path.exists(newfile):
-            with open(newfile, "r") as f:
+            with open(newfile, 'r') as f:
                 lines = f.readlines()
                 for line in lines:
                     if re.search(vendor, line):
@@ -57,9 +58,9 @@ if webcam_found:
     # find all matching products in all matching vendors
     product_list = []
     for id in vendor_list:
-        newfile = "/sys/bus/usb/devices/" + id + "/idProduct"
+        newfile = '/sys/bus/usb/devices/' + id + '/idProduct'
         if os.path.exists(newfile):
-            with open(newfile, "r") as f:
+            with open(newfile, 'r') as f:
                 lines = f.readlines()
                 for line in lines:
                     if re.search(product, line):
@@ -71,9 +72,9 @@ cam_id = -1
 
 # make sure there is only one camera entry
 if len(product_list) > 1:
-    print("More than one camera found, disabling camera key")
+    print('More than one camera found, disabling camera key')
 elif len(product_list) == 0:
-    print("No camera found, disabling camera key")
+    print('No camera found, disabling camera key')
 else:
 
     # grab the only matchng vendor/product
@@ -82,49 +83,51 @@ else:
 # get current cam state
 cam_state = False
 if cam_id != -1:
-    cam_file = "/sys/bus/usb/devices/" + cam_id + "/bConfigurationValue"
+    cam_file = '/sys/bus/usb/devices/' + cam_id + '/bConfigurationValue'
     if os.path.exists(cam_file):
-        with open(cam_file, "r") as f:
+        with open(cam_file, 'r') as f:
             lines = f.readlines()
             for line in lines:
-                if "1" in line:
+                if '1' in line:
                     cam_state = True
                     break
 
 # find WMI keyboard
 wmi_kbd_id = -1
-with open('/proc/bus/input/devices', 'r') as f:
-    lines = f.readlines()
-    for line in lines:
-        if "Sysfs=/devices/platform/asus-nb-wmi/input/" in line:
-            parts = line.split("/")
-            part = parts[-1]
-            parts = part.split("input")
-            wmi_kbd_id = parts[1].rstrip()
-            break
+if os.path.exists('/proc/bus/input/devices'):
+    with open('/proc/bus/input/devices', 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            if 'Sysfs=/devices/platform/asus-nb-wmi/input/' in line:
+                parts = line.split('/')
+                part = parts[-1]
+                parts = part.split('input')
+                wmi_kbd_id = parts[1].rstrip()
+                break
 
 # make sure we found the keyboard
 if wmi_kbd_id == -1:
-    print("WMI keyboard not found, freaking out...")
+    print('WMI keyboard not found, freaking out...')
     sys.exit(1)
 
-# create a file descriptor (pipe) for the WMI keyboard
-fd_wmi_kbd = open('/dev/input/event' + str(wmi_kbd_id), 'rb')
+if os.path.exists('/dev/input/event' + str(wmi_kbd_id)):
+    # create a file descriptor (pipe) for the WMI keyboard
+    fd_wmi_kbd = open('/dev/input/event' + str(wmi_kbd_id), 'rb')
 
-# set file descriptor (pipe) to non-blocking
-fcntl.fcntl(fd_wmi_kbd, fcntl.F_SETFL, os.O_NONBLOCK)
+    # set file descriptor (pipe) to non-blocking
+    fcntl.fcntl(fd_wmi_kbd, fcntl.F_SETFL, os.O_NONBLOCK)
 
-# get a device object (end point) for the file descriptor (pipe)
-wmi_kbd = libevdev.Device(fd_wmi_kbd)
+    # get a device object (end point) for the file descriptor (pipe)
+    wmi_kbd = libevdev.Device(fd_wmi_kbd)
 
-# prevent the keys from sending their unmapped (0x0) codes to the system
-# N.B. this grabs ALL WMI keys, but the ones we don't explicitily handle will
-# get bubbled up to the asus-nb-wmi driver, so the system can still see them
-wmi_kbd.grab()
+    # prevent the keys from sending their unmapped (0x0) codes to the system
+    # N.B. this grabs ALL WMI keys, but the ones we don't explicitily handle will
+    # get bubbled up to the asus-nb-wmi driver, so the system can still see them
+    wmi_kbd.grab()
 
 # create a fake keyboard for the "MyAsus" key
 dev_fake_kbd = libevdev.Device()
-dev_fake_kbd.name = "Asus_L410M_WMI_Keys"
+dev_fake_kbd.name = 'Asus_L410M_WMI_Keys'
 dev_fake_kbd.enable(libevdev.EV_KEY.KEY_LEFTSHIFT)
 dev_fake_kbd.enable(libevdev.EV_KEY.KEY_LEFTMETA)
 dev_fake_kbd.enable(libevdev.EV_KEY.KEY_R)
@@ -146,21 +149,24 @@ while True:
                 # toggle the camera state
                 cam_state = not cam_state
 
-                # get the proper file for the cam
-                cam_file = open("/sys/bus/usb/devices/" + cam_id +
-                    "/bConfigurationValue", "w+")
+                if os.path.exists('/sys/bus/usb/devices/' + cam_id +
+                    '/bConfigurationValue'):
 
-                # turn cam on
-                if cam_state:
-                    cam_file.write("1")
+                    # get the proper file for the cam
+                    cam_file = open('/sys/bus/usb/devices/' + cam_id +
+                        '/bConfigurationValue', 'w+')
 
-                # turn cam off
-                else:
-                    cam_file.write("0")
+                    # turn cam on
+                    if cam_state:
+                        cam_file.write('1')
 
-                # done with cam file
-                cam_file.flush()
-                cam_file.close()
+                    # turn cam off
+                    else:
+                        cam_file.write('0')
+
+                    # done with cam file
+                    cam_file.flush()
+                    cam_file.close()
 
             # no camera, map to Shift-Meta-R
             else:
