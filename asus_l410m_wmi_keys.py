@@ -18,10 +18,9 @@ import time
 KEY_WMI_CAMERA = 133
 KEY_WMI_MYASUS = 134
 
-# get cam_id
-cam_id = -1
+# get cam vendor/product id
+webcam_found = False
 with open('/proc/bus/input/devices', 'r') as f:
-    webcam_found = False
     lines = f.readlines()
 
     # walk through the file backward (vendor and product come before the name)
@@ -30,7 +29,6 @@ with open('/proc/bus/input/devices', 'r') as f:
             webcam_found = True
             continue
         if webcam_found:
-            webcam_found = False
             parts = line.split(" ")
             vendor = parts[2]
             vendor = vendor.split("=")
@@ -38,49 +36,60 @@ with open('/proc/bus/input/devices', 'r') as f:
             product = parts[3]
             product = product.split("=")
             product = product[1]
+            break
 
-            # find all matching vendors
-            list = []
-            for file in os.listdir("/sys/bus/usb/devices/"):
-                newfile = "/sys/bus/usb/devices/" + file + "/idVendor"
-                if os.path.exists(newfile):
-                    with open(newfile, "r") as f2:
-                        lines2 = f2.readlines()
-                        for line2 in lines2:
-                            if re.search(vendor, line2):
-                                list.append(file)
+# get cam bus/device
+if webcam_found:
 
-            # find all matching products
-            list2 = []
-            for file in list:
-                newfile = "/sys/bus/usb/devices/" + file + "/idProduct"
-                if os.path.exists(newfile):
-                    with open(newfile, "r") as f2:
-                        lines2 = f2.readlines()
-                        for line2 in lines2:
-                            if re.search(product, line2):
-                                list2.append(file)
+    # find all matching vendors
+    vendor_list = []
+    possible_ids = os.listdir("/sys/bus/usb/devices/")
+    for id in possible_ids:
+        newfile = "/sys/bus/usb/devices/" + id + "/idVendor"
+        if os.path.exists(newfile):
+            with open(newfile, "r") as f:
+                lines = f.readlines()
+                for line in lines:
+                    if re.search(vendor, line):
+                        vendor_list.append(id)
+                        break
+
+    # find all matching products in all matching vendors
+    product_list = []
+    for id in vendor_list:
+        newfile = "/sys/bus/usb/devices/" + id + "/idProduct"
+        if os.path.exists(newfile):
+            with open(newfile, "r") as f:
+                lines = f.readlines()
+                for line in lines:
+                    if re.search(product, line):
+                        product_list.append(id)
+                        break
+
+# get cam_id
+cam_id = -1
 
 # make sure there is only one camera entry
-if len(list2) > 1:
-    print("More than one camera found, disabling camera key...")
-elif len(list2) == 0:
-    print("No camera found, disabling camera key...")
+if len(product_list) > 1:
+    print("More than one camera found, disabling camera key")
+elif len(product_list) == 0:
+    print("No camera found, disabling camera key")
 else:
 
     # grab the only matchng vendor/product
-    cam_id = list2[0]
+    cam_id = product_list[0]
 
 # get current cam state
 cam_state = False
 if cam_id != -1:
     cam_file = "/sys/bus/usb/devices/" + cam_id + "/bConfigurationValue"
-    if (os.path.exists(cam_file)):
+    if os.path.exists(cam_file):
         with open(cam_file, "r") as f:
             lines = f.readlines()
             for line in lines:
                 if "1" in line:
                     cam_state = True
+                    break
 
 # find WMI keyboard
 wmi_kbd_id = -1
@@ -92,6 +101,7 @@ with open('/proc/bus/input/devices', 'r') as f:
             part = parts[-1]
             parts = part.split("input")
             wmi_kbd_id = parts[1].rstrip()
+            break
 
 # make sure we found the keyboard
 if wmi_kbd_id == -1:
@@ -108,6 +118,8 @@ fcntl.fcntl(fd_wmi_kbd, fcntl.F_SETFL, os.O_NONBLOCK)
 wmi_kbd = libevdev.Device(fd_wmi_kbd)
 
 # prevent the keys from sending their unmapped (0x0) codes to the system
+# N.B. this grabs ALL WMI keys, but the ones we don't explicitily handle will
+# get bubbled up to the asus-nb-wmi driver, so the system can still see them
 wmi_kbd.grab()
 
 # create a fake keyboard for the "MyAsus" key
@@ -122,7 +134,7 @@ fake_kbd = dev_fake_kbd.create_uinput_device()
 # main loop
 while True:
 
-    # look at each event in the pipe
+    # look at each event in the wmi keyboard pipe
     for e in wmi_kbd.events():
 
         # if it's the camera key
@@ -161,7 +173,7 @@ while True:
                     ]
                     fake_kbd.send_events(events)
 
-                    # press Cmd
+                    # press Meta
                     events = [
                         libevdev.InputEvent(libevdev.EV_KEY.KEY_LEFTMETA, 1),
                         libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
@@ -182,7 +194,7 @@ while True:
                     ]
                     fake_kbd.send_events(events)
 
-                    # release Cmd
+                    # release Meta
                     events = [
                         libevdev.InputEvent(libevdev.EV_KEY.KEY_LEFTMETA, 0),
                         libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
@@ -209,7 +221,7 @@ while True:
                 ]
                 fake_kbd.send_events(events)
 
-                # press Cmd
+                # press Meta
                 events = [
                     libevdev.InputEvent(libevdev.EV_KEY.KEY_LEFTMETA, 1),
                     libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
@@ -230,7 +242,7 @@ while True:
                 ]
                 fake_kbd.send_events(events)
 
-                # release Cmd
+                # release Meta
                 events = [
                     libevdev.InputEvent(libevdev.EV_KEY.KEY_LEFTMETA, 0),
                     libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
@@ -245,6 +257,10 @@ while True:
                 fake_kbd.send_events(events)
             except OSError as e:
                 pass
+
+        # not our key
+        else:
+            pass
 
     # don't eat all cpu!
     time.sleep(0.1)

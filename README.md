@@ -43,6 +43,13 @@ foo@bar:~$ sudo ./install.sh
 ```
 You can also download the [latest release](http://github.com/danahynes/Asus_L410M_WMI_Keys/releases), unzip it, set the scancodes in asus_l410m_wmi_keys.py, and run the install.sh file from there.
 
+# Uninstalling
+
+To uninstall, go to the git directory and run:
+```
+foo@bar:~$ sudo ./uninstall.sh
+```
+
 # Finding the KEY_WMI_* values
 
 Here's how to find the KEY_WMI_* values for the keys you want to map:
@@ -65,9 +72,9 @@ Use these values in asus_l410m_wmi_keys.py to fire events for your unused keys. 
 
 # TODO
 
-1. camera file lock checking/syncing
 1. a LOT more checks to see if files exist
 1. more error checking
+1. camera file lock checking/syncing
 1. camera status indicator
 
 # -)
