@@ -33,6 +33,11 @@ foo@bar:~$ git clone https://github.com/danahynes/Asus_L410M_WMI_Keys
 foo@bar:~$ cd Asus_L410M_WMI_Keys
 ```
 
+Next you need to install the python libevdev library:
+```
+foo@bar~$ pip3 install libevdev
+```
+
 You MAY need to find the key scancodes and edit asus_l410m_wmi_keys.py before you install.
 
 **See note below!**

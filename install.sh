@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/usr/bin/env bash
 #------------------------------------------------------------------------------#
 # Filename: install.sh                                           /          \  #
 # Project : Asus_L410M_WMI_Keys                                 |     ()     | #

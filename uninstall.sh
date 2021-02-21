@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/usr/bin/env bash
 #------------------------------------------------------------------------------#
 # Filename: uninstall.sh                                         /          \  #
 # Project : Asus_L410M_WMI_Keys                                 |     ()     | #
@@ -7,12 +7,12 @@
 # License : WTFPLv2                                              \          /  #
 #------------------------------------------------------------------------------#
 
-# start service now and on reboot
+# stop service now and on reboot
 sudo systemctl stop asus_l410m_wmi_keys
 sudo systemctl disable asus_l410m_wmi_keys
 
-# copy files to location
+# delete files from location
 sudo rm /usr/bin/asus_l410m_wmi_keys.py
-sudo rm /lib/systemd/system//asus_l410m_wmi_keys.service 
+sudo rm /lib/systemd/system/asus_l410m_wmi_keys.service
 
 # -)
