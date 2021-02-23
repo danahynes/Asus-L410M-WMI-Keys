@@ -44,16 +44,17 @@ if webcam_found:
 
     # find all matching vendors
     vendor_list = []
-    possible_ids = os.listdir('/sys/bus/usb/devices/')
-    for id in possible_ids:
-        newfile = '/sys/bus/usb/devices/' + id + '/idVendor'
-        if os.path.exists(newfile):
-            with open(newfile, 'r') as f:
-                lines = f.readlines()
-                for line in lines:
-                    if re.search(vendor, line):
-                        vendor_list.append(id)
-                        break
+    if if os.path.exists('/sys/bus/usb/devices/'):
+        possible_ids = os.listdir('/sys/bus/usb/devices/')
+        for id in possible_ids:
+            newfile = '/sys/bus/usb/devices/' + id + '/idVendor'
+            if os.path.exists(newfile):
+                with open(newfile, 'r') as f:
+                    lines = f.readlines()
+                    for line in lines:
+                        if re.search(vendor, line):
+                            vendor_list.append(id)
+                            break
 
     # find all matching products in all matching vendors
     product_list = []
@@ -67,10 +68,8 @@ if webcam_found:
                         product_list.append(id)
                         break
 
-# get cam_id
-cam_id = -1
-
 # make sure there is only one camera entry
+cam_id = -1
 if len(product_list) > 1:
     print('More than one camera found, disabling camera key')
 elif len(product_list) == 0:
@@ -91,6 +90,9 @@ if cam_id != -1:
                 if '1' in line:
                     cam_state = True
                     break
+    else:
+        print('Could not read cam state, disabling camera key')
+        cam_id = -1
 
 # find WMI keyboard
 wmi_kbd_id = -1
@@ -105,12 +107,13 @@ if os.path.exists('/proc/bus/input/devices'):
                 wmi_kbd_id = parts[1].rstrip()
                 break
 
-# make sure we found the keyboard
+# no keyboard, no laundry
 if wmi_kbd_id == -1:
     print('WMI keyboard not found, freaking out...')
     sys.exit(1)
 
 if os.path.exists('/dev/input/event' + str(wmi_kbd_id)):
+
     # create a file descriptor (pipe) for the WMI keyboard
     fd_wmi_kbd = open('/dev/input/event' + str(wmi_kbd_id), 'rb')
 
@@ -124,6 +127,11 @@ if os.path.exists('/dev/input/event' + str(wmi_kbd_id)):
     # N.B. this grabs ALL WMI keys, but the ones we don't explicitily handle will
     # get bubbled up to the asus-nb-wmi driver, so the system can still see them
     wmi_kbd.grab()
+
+# no keyboard, no laundry
+else:
+    print('Could not open connection to keyboard, freaking out...')
+    sys.exit(1)
 
 # create a fake keyboard for the "MyAsus" key
 dev_fake_kbd = libevdev.Device()

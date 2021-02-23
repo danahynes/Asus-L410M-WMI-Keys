@@ -75,6 +75,10 @@ Note that these are hex values so the camera key 0x85 becomes 133 decimal.
 
 Use these values in asus_l410m_wmi_keys.py to fire events for your unused keys. Also if you have other keys that don't work, and you know python, you can map more keys to more functions if you have other non-working keys.
 
+# Notes
+
+Note that the keys are also function keys, so what happens when you press them depends on the state of the Fn key. This laptop, and others like it, have a "Function Lock" feature (similar to Caps Lock) that is activated by pressing Fn+Esc. This feature is set to "on" at boot, so you may need to turn it off or press Fn along with the key to get the desired behavior.
+
 # TODO
 
 1. more error checking
