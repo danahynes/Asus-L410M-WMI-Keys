@@ -46,7 +46,7 @@ Once you do that, you can install by:
 ```
 foo@bar:~$ sudo ./install.sh
 ```
-You can also download the [latest release](http://github.com/danahynes/Asus_L410M_WMI_Keys/releases), unzip it, set the scancodes in asus_l410m_wmi_keys.py, and run the install.sh file from there.
+You can also download the [latest release](http://github.com/danahynes/Asus_L410M_WMI_Keys/releases/latest), unzip it, set the scancodes in asus_l410m_wmi_keys.py, and run the install.sh file from there.
 
 # Uninstalling
 
