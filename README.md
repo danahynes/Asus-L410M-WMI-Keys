@@ -14,7 +14,7 @@ On my laptop (a 2020 Asus L410M) these are the camera toggle key (same as F10) a
 
 ![](keys.jpg)
 
-I banged my head against a wall for a few hours until I found a solution to this. At first I thought the asus-nb-wmi driver was swallowing events for keys it did not recognize (actually some programs, like xev, could see them being pressed and released but they just had 0x0 scancodes). But then I realized the asus-nb-wmi driver was logging them in dmesg as "unknown" keys, but with unique scancodes. Turns out that the python library libevdev can read the scancodes from the keyboard before the asus-nb-wmi driver throws them away.
+I banged my head against a wall for a few hours until I found a solution to this. At first I thought the asus-nb-wmi driver was swallowing events for keys it did not recognize (actually some programs, like xev, could see them being pressed and released but they just had 0x0 scancodes). But then I realized the asus-nb-wmi driver was logging them in *dmesg* as "unknown" keys, but with unique scancodes. Turns out that the python library libevdev can read the scancodes from the keyboard before the asus-nb-wmi driver throws them away.
 
 For the camera key, I am "poking" a value into a file that the camera watches to see if it should be enabled.
 
@@ -29,15 +29,15 @@ If the WMI keyboard can't be found, then all hope is lost and the programs quits
 # Installing
 
 To install, clone the git repo:
-```
+```bash
 foo@bar:~$ cd ~/Downloads
 foo@bar:~$ git clone https://github.com/danahynes/Asus_L410M_WMI_Keys
 foo@bar:~$ cd Asus_L410M_WMI_Keys
 ```
 
 Next you need to install the python libevdev library:
-```
-foo@bar~$ pip3 install libevdev
+```bash
+foo@bar~/Downloads/Asus_L410M_WMI_Keys$ pip3 install libevdev
 ```
 
 You MAY need to find the key scancodes and edit asus_l410m_wmi_keys.py before you install.
@@ -45,16 +45,22 @@ You MAY need to find the key scancodes and edit asus_l410m_wmi_keys.py before yo
 **See note below!**
 
 Once you do that, you can install by:
-```
-foo@bar:~$ sudo ./install.sh
+```bash
+foo@bar:~/Downloads/Asus_L410M_WMI_Keys$ sudo ./install.sh
 ```
 You can also download the [latest release](http://github.com/danahynes/Asus_L410M_WMI_Keys/releases/latest), unzip it, set the scancodes in asus_l410m_wmi_keys.py, and run the install.sh file from there.
 
 # Uninstalling
 
 To uninstall, go to the git directory and run:
+```bash
+foo@bar:~/Downloads/Asus_L410M_WMI_Keys$ sudo ./uninstall.sh
 ```
-foo@bar:~$ sudo ./uninstall.sh
+
+or delete the files manually:
+```bash
+foo@bar:~$ sudo rm /usr/bin/asus_l410m_wmi_keys.py
+foo@bar:~$ sudo rm /lib/systemd/system/asus_l410m_wmi_keys.service
 ```
 
 # Finding the KEY_WMI_* values
@@ -62,11 +68,11 @@ foo@bar:~$ sudo ./uninstall.sh
 Here's how to find the KEY_WMI_* values for the keys you want to map:
 
 Press the key you want to map a few times, then do this:
-```
+```bash
 foo@bar~$ dmesg
 ```
 where the you should find this in the output:
-```
+```bash
 [30999.432449] asus_wmi: Unknown key 85 pressed
 [31001.608410] asus_wmi: Unknown key 85 pressed
 [31001.608410] asus_wmi: Unknown key 85 pressed
@@ -83,7 +89,6 @@ Note that the keys are also function keys, so what happens when you press them d
 
 # TODO
 
-1. more error checking
 1. camera file lock checking/syncing
 1. camera status indicator
 
