@@ -10,7 +10,6 @@
 import fcntl
 import libevdev
 import os
-import re
 import sys
 import time
 
@@ -53,7 +52,7 @@ if webcam_found:
                 with open(newfile, 'r') as f:
                     lines = f.readlines()
                     for line in lines:
-                        if re.search(vendor, line):
+                        if vendor in line:
                             vendor_list.append(id)
                             break
 
@@ -65,7 +64,7 @@ if webcam_found:
             with open(newfile, 'r') as f:
                 lines = f.readlines()
                 for line in lines:
-                    if re.search(product, line):
+                    if product in line:
                         product_list.append(id)
                         break
 
