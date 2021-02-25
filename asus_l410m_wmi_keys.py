@@ -11,6 +11,7 @@ import fcntl
 import libevdev
 import os
 import re
+import sys
 import time
 
 # constants

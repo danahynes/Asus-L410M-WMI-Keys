@@ -16,6 +16,6 @@ ExecStart=/usr/bin/python3 /usr/bin/asus_l410m_wmi_keys.py
 TimeoutSec=5
 
 [Install]
-WantedBy=default.target
+WantedBy=multi-user.target
 
 # -)
