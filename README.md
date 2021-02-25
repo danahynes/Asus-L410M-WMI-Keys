@@ -12,6 +12,8 @@ This small program runs at boot and gives you access to the keys on the keyboard
 
 On my laptop (a 2020 Asus L410M) these are the camera toggle key (same as F10) and the "Launch MyAsus" key (same as F12).
 
+![](keys.jpg)
+
 I banged my head against a wall for a few hours until I found a solution to this. At first I thought the asus-nb-wmi driver was swallowing events for keys it did not recognize (actually some programs, like xev, could see them being pressed and released but they just had 0x0 scancodes). But then I realized the asus-nb-wmi driver was logging them in dmesg as "unknown" keys, but with unique scancodes. Turns out that the python library libevdev can read the scancodes from the keyboard before the asus-nb-wmi driver throws them away.
 
 For the camera key, I am "poking" a value into a file that the camera watches to see if it should be enabled.
