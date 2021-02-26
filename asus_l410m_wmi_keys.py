@@ -69,7 +69,7 @@ if webcam_found:
                         break
 
 # make sure there is only one camera entry
-cam_id = -1
+webcam_id = -1
 if len(product_list) > 1:
     print('More than one camera found, disabling camera key')
 elif len(product_list) == 0:
@@ -77,22 +77,22 @@ elif len(product_list) == 0:
 else:
 
     # grab the only matchng vendor/product
-    cam_id = product_list[0]
+    webcam_id = product_list[0]
 
 # get current cam state
-cam_state = False
-if cam_id != -1:
-    cam_file = '/sys/bus/usb/devices/' + cam_id + '/bConfigurationValue'
+webcam_state = False
+if webcam_id != -1:
+    cam_file = '/sys/bus/usb/devices/' + webcam_id + '/bConfigurationValue'
     if os.path.exists(cam_file):
         with open(cam_file, 'r') as f:
             lines = f.readlines()
             for line in lines:
                 if '1' in line:
-                    cam_state = True
+                    webcam_state = True
                     break
     else:
         print('Could not read cam state, disabling camera key')
-        cam_id = -1
+        webcam_id = -1
 
 # find WMI keyboard
 wmi_kbd_id = -1
@@ -152,20 +152,20 @@ while True:
         if e.value == KEY_WMI_CAMERA:
 
             # if we found the camera
-            if cam_id != -1:
+            if webcam_id != -1:
 
                 # toggle the camera state
-                cam_state = not cam_state
+                webcam_state = not webcam_state
 
-                if os.path.exists('/sys/bus/usb/devices/' + cam_id +
+                if os.path.exists('/sys/bus/usb/devices/' + webcam_id +
                     '/bConfigurationValue'):
 
                     # get the proper file for the cam
-                    cam_file = open('/sys/bus/usb/devices/' + cam_id +
+                    cam_file = open('/sys/bus/usb/devices/' + webcam_id +
                         '/bConfigurationValue', 'w+')
 
                     # turn cam on
-                    if cam_state:
+                    if webcam_state:
                         cam_file.write('1')
 
                     # turn cam off
