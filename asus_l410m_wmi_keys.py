@@ -44,7 +44,7 @@ if webcam_found:
 
     # find all matching vendors
     vendor_list = []
-    if if os.path.exists('/sys/bus/usb/devices/'):
+    if os.path.exists('/sys/bus/usb/devices/'):
         possible_ids = os.listdir('/sys/bus/usb/devices/')
         for id in possible_ids:
             newfile = '/sys/bus/usb/devices/' + id + '/idVendor'
