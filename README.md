@@ -11,7 +11,7 @@
 
 This small program runs at boot and gives you access to the keys on the keyboard that aren't handled by the current asus-nb-wmi driver.
 
-On my laptop (a 2020 Asus L410M) these are the camera toggle key (same as F10) and the "Launch MyAsus" key (same as F12).
+On my laptop (a 2020 Asus L410M) these are the camera toggle key (same as F10) and the "Launch MyAsus or "//]" key (same as F12).
 
 ![](keys.jpg)
 
@@ -19,7 +19,10 @@ I banged my head against a wall for a few hours until I found a solution to this
 
 For the camera key, I am "poking" a value into a file that the camera watches to see if it should be enabled.
 
-Note that this is NOT a one-to-one hardware switch for the webcam. It will turn the webcam off if you're using an app that is using the webcam, but it won't turn back on if the app is still running. Also if you use the key while the camera is in use, there is an issue where the system file gets out of sync (I believe the app has a lock on the file) and you may have to press the button a few times with all apps closed to re-sync it. Also, there is no indicator for whether the cam is currently on or off, other that the green LED if you have a cam app open. I'm working on these issues, but for now, "it mostly works™".
+Those of you who have them at the ready, please put on your tinfoil hats.
+
+
+This is NOT a one-to-one hardware switch for the webcam. It will turn the webcam off if you're using an app that is using the webcam, but it won't turn back on if the app is still running. Also if you use the key while the camera is in use, there is an issue where the system file gets out of sync (I believe the app has a lock on the file) and you may have to press the button a few times with all apps closed to re-sync it. Also, there is no indicator for whether the cam is currently on or off, other that the green LED if you have a cam app open. I'm working on these issues, but for now, "it mostly works™".
 
 Also note that if no camera is found, or if more than one camera is found, the camera key will be remapped to Shift-Meta-R.
 
@@ -88,9 +91,12 @@ Use these values in asus_l410m_wmi_keys.py to fire events for your unused keys. 
 
 Note that the keys are also function keys, so what happens when you press them depends on the state of the Fn key. This laptop, and others like it, have a "Function Lock" feature (similar to Caps Lock) that is activated by pressing Fn+Esc. This feature is set to "on" at boot, so you may need to turn it off or press Fn along with the key to get the desired behavior.
 
+Also note that this key setting is not saved across boot cycles, so if you have the camera off and you reboot, it will most likely be on after a reboot.
+
 # TODO
 
 1. camera file lock checking/syncing
 1. camera status indicator
+1. save camera state across reboots
 
 # -)
