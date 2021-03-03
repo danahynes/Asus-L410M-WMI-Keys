@@ -124,8 +124,9 @@ if os.path.exists('/dev/input/event' + str(wmi_kbd_id)):
     wmi_kbd = libevdev.Device(fd_wmi_kbd)
 
     # prevent the keys from sending their unmapped (0x0) codes to the system
-    # N.B. this grabs ALL WMI keys, but the ones we don't explicitily handle will
-    # get bubbled up to the asus-nb-wmi driver, so the system can still see them
+    # N.B. this grabs ALL WMI keys, but the ones we don't explicitily handle
+    # will get bubbled up to the asus-nb-wmi driver, so the system can still
+    # see them
     wmi_kbd.grab()
 
 # no keyboard, no laundry
