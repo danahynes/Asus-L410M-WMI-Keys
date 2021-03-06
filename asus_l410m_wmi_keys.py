@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 #------------------------------------------------------------------------------#
 # Filename: asus_l410m_wmi_keys.py                               /          \  #
 # Project : Asus_L410M_WMI_Keys                                 |     ()     | #
