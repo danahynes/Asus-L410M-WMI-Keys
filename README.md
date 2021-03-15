@@ -11,7 +11,7 @@
 
 This small program runs at boot and gives you access to the keys on the keyboard that aren't handled by the current asus-nb-wmi driver.
 
-On my laptop (a 2021 Asus L410M) these are the camera toggle key (same as F10) and the "Launch MyAsus or "//]" key (same as F12).
+On my laptop (a 2021 Asus L410M) these are the camera toggle key (same as F10) and the "Launch MyAsus" or "//]" key (same as F12).
 
 ![](keys.jpg)
 
@@ -37,7 +37,7 @@ Once you do that, you can install by:
 ```bash
 foo@bar:~/Downloads/Asus_L410M_WMI_Keys$ sudo ./install.sh
 ```
-You can also download the [latest release](http://github.com/danahynes/Asus_L410M_WMI_Keys/releases/latest), unzip it, set the scancodes in asus_l410m_wmi_keys.py, and run the install.sh file from there.
+You can also download the [latest release](http://github.com/danahynes/Asus_L410M_WMI_Keys/releases/latest), unzip it, set the scancodes in asus_l410m_wmi_keys.py, and run the install.sh file as sudo from there.
 
 # Uninstalling
 
