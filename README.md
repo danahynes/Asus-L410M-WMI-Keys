@@ -93,7 +93,7 @@ If the WMI keyboard can't be found, then all hope is lost and the programs quits
 
 If it doesn't seem to be working right, check the log file at /var/log/asus_l410m_wmi_keys.log.
 
-Note that the keys are also function keys, so what happens when you press them depends on the state of the Fn key. This laptop, and others like it, have a "Function Lock" feature (similar to Caps Lock) that is activated by pressing Fn+Esc. This feature is set to "on" at boot, so you may need to turn it off or press Fn along with the key to get the desired behavior. The "Function Lock" feature can be turned of in the BIOS menu, in which case you need to press the "Fn" key with the desired key to use the WMI function (volume, screen brightness, etc.)
+Note that the keys are also function keys, so what happens when you press them depends on the state of the Fn key. This laptop, and others like it, have a "Function Lock" feature (similar to Caps Lock) that is activated by pressing Fn+Esc. This feature is set to "on" at boot, so you may need to turn it off or press Fn along with the key to get the desired behavior. The "Function Lock" feature can be turned off in the BIOS menu, in which case you need to press the "Fn" key with the desired key to use the WMI function (volume, screen brightness, etc.)
 
 # TODO
 
