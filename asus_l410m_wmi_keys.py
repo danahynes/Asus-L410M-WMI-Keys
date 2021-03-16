@@ -14,11 +14,6 @@ import logging
 import os
 import time
 
-# constants
-# TODO: find an easier way to get these besides dmesg
-KEY_WMI_CAMERA = 0x85
-KEY_WMI_MYASUS = 0x86
-
 # set up logging
 logging.basicConfig(filename = '/var/log/asus_l410m_wmi_keys.log',
     level = logging.DEBUG, format = '%(asctime)s - %(message)s')
@@ -87,12 +82,6 @@ if os.path.exists('/dev/input/event' + str(wmi_kbd_id)):
     # get a device object (end point) for the file descriptor (pipe)
     wmi_kbd = libevdev.Device(fd_wmi_kbd)
 
-    # prevent the keys from sending their unmapped (0x0) codes to the system
-    # N.B. this grabs ALL WMI keys, but the ones we don't explicitily handle
-    # will get bubbled up to the asus-nb-wmi driver, so the system can still
-    # see them
-    wmi_kbd.grab()
-
 # no keyboard, no laundry
 else:
     logging.debug('Could not open connection to keyboard, freaking out...')
@@ -106,6 +95,11 @@ dev_fake_kbd.enable(libevdev.EV_KEY.KEY_LEFTMETA)
 dev_fake_kbd.enable(libevdev.EV_KEY.KEY_R)
 dev_fake_kbd.enable(libevdev.EV_KEY.KEY_T)
 fake_kbd = dev_fake_kbd.create_uinput_device()
+
+# constants
+# TODO: find an easier way to get these besides dmesg
+KEY_WMI_CAMERA = 0x85
+KEY_WMI_MYASUS = 0x86
 
 # main loop
 while True:
@@ -217,9 +211,6 @@ while True:
 
     # don't eat all cpu!
     time.sleep(0.1)
-
-# release Keyboard
-wmi_kbd.ungrab()
 
 # close file descriptor (pipe) we opened
 fd_wmi_kbd.close()
