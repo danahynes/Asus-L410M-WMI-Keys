@@ -86,7 +86,7 @@ This is NOT a one-to-one hardware switch for the webcam. It will turn the webcam
 Also note that if no camera is found, or if more than one camera is found, the camera key will be remapped to Shift-Meta-R.
 -->
 
-Turning the camera on and off is still a work in progress, so for now the "Toggle Camera" key is mapped to *Shift-Meta-R*. As for the "MyAsus" key, it presents itself as *Shift-Meta-T*. The screenshot (*F11*) key is already mapped to *Shift-Meta-S*, so these seemed like reasonable values for the keys to the left and right of it.
+Turning the camera on and off is still a work in progress, so for now the "Toggle Camera" (*F10*) key is mapped to *Shift-Meta-R*. As for the "MyAsus" key (*F12*), it presents itself as *Shift-Meta-T*. The screenshot (*F11*) key is already mapped to *Shift-Meta-S*, so these seemed like reasonable values for the keys to the left and right of it.
 
 If the WMI keyboard can't be found, then all hope is lost and the programs quits.
 
