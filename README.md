@@ -11,7 +11,7 @@
 
 This small program runs at boot and gives you access to the keys on the keyboard that aren't handled by the current asus-nb-wmi driver.
 
-On my laptop (a 2021 Asus L410M) these are the camera toggle key (same as F10) and the "Launch MyAsus" or "//]" key (same as F12).
+On my laptop (a 2021 Asus L410M) these are the camera toggle key (same as *F10*) and the "Launch MyAsus" or "//]" key (same as *F12*).
 
 ![](keys.jpg)
 
@@ -29,7 +29,7 @@ Next you need to install the python libevdev library:
 foo@bar~/Downloads/Asus_L410M_WMI_Keys$ pip3 install libevdev
 ```
 
-You MAY need to find the key scancodes and edit asus_l410m_wmi_keys.py before you install.
+You MAY need to find the key scancodes and edit *asus_l410m_wmi_keys.py* before you install.
 
 **See note below!**
 
@@ -37,7 +37,7 @@ Once you do that, you can install by:
 ```bash
 foo@bar:~/Downloads/Asus_L410M_WMI_Keys$ sudo ./install.sh
 ```
-You can also download the [latest release](http://github.com/danahynes/Asus_L410M_WMI_Keys/releases/latest), unzip it, possibly set the scancodes in asus_l410m_wmi_keys.py, and run the install.sh file as sudo from there.
+You can also download the [latest release](http://github.com/danahynes/Asus_L410M_WMI_Keys/releases/latest), unzip it, possibly set the scancodes in *asus_l410m_wmi_keys.py*, and run the install.sh file as *sudo* from there.
 
 # Uninstalling
 
@@ -59,7 +59,7 @@ Here's how to find the KEY_WMI_* values for the keys you want to map:
 
 Press the key you want to map a few times, then do this:
 ```bash
-foo@bar~$ dmesg | grep "asus_wmi"
+foo@bar:~$ dmesg | grep "asus_wmi"
 ```
 where the you should find this near the end of the output:
 ```bash
@@ -70,7 +70,7 @@ where the you should find this near the end of the output:
 
 In this case scancode 85 is my camera key. Note that this is a hex value so it must be written as 0x85.
 
-Use these values in asus_l410m_wmi_keys.py to fire events for your unused keys. Also if you have other keys that don't work, and you know python, you can map more keys to more functions if you have other non-working keys.
+Use these values in *asus_l410m_wmi_keys.py* to fire events for your unused keys. Also if you have other keys that don't work, and you know python, you can map more keys to more functions if you have other non-working keys.
 
 # Notes
 
@@ -86,14 +86,16 @@ This is NOT a one-to-one hardware switch for the webcam. It will turn the webcam
 Also note that if no camera is found, or if more than one camera is found, the camera key will be remapped to Shift-Meta-R.
 -->
 
-Turning the camera on and off is still a work in progress, so for now the camera key is mapped to Shift-Meta-R. As for the "MyAsus" key, it presents itself as Shift-Meta-T. The screenshot (F11) key is already mapped to Shift-Meta-S, so these seemed like reasonable values for the keys to the left and right of it.
+Turning the camera on and off is still a work in progress, so for now the camera key is mapped to *Shift-Meta-R*. As for the "MyAsus" key, it presents itself as *Shift-Meta-T*. The screenshot (*F11*) key is already mapped to *Shift-Meta-S*, so these seemed like reasonable values for the keys to the left and right of it.
 
 If the WMI keyboard can't be found, then all hope is lost and the programs quits.
 
+If it doesn't seem to be working right, check the log file:
+``` bash
+foo@bar:~$ cat /var/log/asus_l410m_wmi_keys.log
+```
 
-If it doesn't seem to be working right, check the log file at /var/log/asus_l410m_wmi_keys.log.
-
-Note that the keys are also function keys, so what happens when you press them depends on the state of the *Fn* key. This laptop, and others like it, have a "Function Lock" feature (similar to Caps Lock) that is activated by pressing *Fn+Esc*. This feature is set to "on" at boot, so you may need to turn it off or press *Fn* along with the key to get the desired behavior. The "Function Lock" feature can be turned off in the BIOS menu, in which case you need to press the *Fn* key with the desired key to use the WMI function (volume, screen brightness, etc.)
+Note that the keys are also function keys, so what happens when you press them depends on the state of the *Fn* key. This laptop, and others like it, have a "Function Lock" feature (similar to "Caps Lock") that is activated by pressing *Fn+Esc*. This feature is set to "on" at boot, so you may need to turn it off or press *Fn* along with the key to get the desired behavior. The "Function Lock" feature can be turned off in the BIOS menu, in which case you need to press the *Fn* key with the desired key to use the WMI function (volume, screen brightness, etc.), otherwise pressing the key alone sends *Fn(N)*.
 
 # TODO
 
