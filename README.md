@@ -59,7 +59,7 @@ Here's how to find the KEY_WMI_* values for the keys you want to map:
 
 Press the key you want to map a few times, then do this:
 ```bash
-foo@bar~$ dmesg
+foo@bar~$ dmesg | grep "asus_wmi"
 ```
 where the you should find this near the end of the output:
 ```bash
@@ -89,6 +89,9 @@ Also note that if no camera is found, or if more than one camera is found, the c
 Turning the camera on and off is still a work in progress, so for now the camera key is mapped to Shift-Meta-R. As for the "MyAsus" key, it presents itself as Shift-Meta-T. The screenshot (F11) key is already mapped to Shift-Meta-S, so these seemed like reasonable values for the keys to the left and right of it.
 
 If the WMI keyboard can't be found, then all hope is lost and the programs quits.
+
+
+If it doesn;t seem to be working right, check the log file at /var/log/asus_l410m_wmi_keys.log.
 
 Note that the keys are also function keys, so what happens when you press them depends on the state of the Fn key. This laptop, and others like it, have a "Function Lock" feature (similar to Caps Lock) that is activated by pressing Fn+Esc. This feature is set to "on" at boot, so you may need to turn it off or press Fn along with the key to get the desired behavior. The "Function Lock" feature can be turned of in the BIOS menu, in which case you need to press the "Fn" key with the desired key to use the WMI function (volume, screen brightness, etc.)
 
