@@ -16,8 +16,8 @@ import time
 
 # constants
 # TODO: find an easier way to get these besides dmesg
-KEY_WMI_CAMERA = 133
-KEY_WMI_MYASUS = 134
+KEY_WMI_CAMERA = 0x85
+KEY_WMI_MYASUS = 0x86
 
 # set up logging
 logging.basicConfig(filename = '/var/log/asus_l410m_wmi_keys.log',
@@ -78,7 +78,7 @@ if not wmi_kbd_found or wmi_kbd_id == -1:
 # grad the keyboard
 if os.path.exists('/dev/input/event' + str(wmi_kbd_id)):
 
-    # create a file descriptor (pipe) for the WMI keyboard
+    # open a file descriptor (pipe) for the WMI keyboard
     fd_wmi_kbd = open('/dev/input/event' + str(wmi_kbd_id), 'rb')
 
     # set file descriptor (pipe) to non-blocking
@@ -160,7 +160,7 @@ while True:
                 ]
                 fake_kbd.send_events(events)
             except OSError as err:
-                pass
+                logging.debug(str(err))
 
         # if it's the "MyAsus" key
         elif event.value == KEY_WMI_MYASUS:
@@ -209,7 +209,7 @@ while True:
                 ]
                 fake_kbd.send_events(events)
             except OSError as err:
-                pass
+                logging.debug(str(err))
 
         # not our key
         else:
