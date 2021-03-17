@@ -29,7 +29,7 @@ Next you need to install the python libevdev library:
 foo@bar~/Downloads/Asus_L410M_WMI_Keys$ pip3 install libevdev
 ```
 
-You MAY need to find the key scancodes and edit *asus_l410m_wmi_keys.py* before you install.
+You *may* need to find the key scancodes and edit *asus_l410m_wmi_keys.py* before you install.
 
 **See note below!**
 
@@ -76,16 +76,6 @@ Use these values in *asus_l410m_wmi_keys.py* to fire events for your unused keys
 
 I banged my head against a wall for a few hours until I found a solution to this. At first I thought the asus-nb-wmi driver was swallowing events for keys it did not recognize (actually some programs, like *xev*, could see them being pressed and released but they just had 0x0 scancodes). But then I realized the asus-nb-wmi driver was logging them in *dmesg* as "unknown" keys, but with unique scancodes. Turns out that the python library libevdev can read the scancodes from the keyboard before the asus-nb-wmi driver throws them away!
 
-<!--
-For the camera key, I am "poking" a value into a file that the camera watches to see if it should be enabled.
-
-Those of you who have them at the ready, please put on your tinfoil hats.
-
-This is NOT a one-to-one hardware switch for the webcam. It will turn the webcam off if you're using an app that is using the webcam, but it won't turn back on if the app is still running. Also if you use the key while the camera is in use, there is an issue where the system file gets out of sync (I believe the app has a lock on the file) and you may have to press the button a few times with all apps closed to re-sync it. Also, there is no indicator for whether the cam is currently on or off, other that the green LED if you have a cam app open. I'm working on these issues, but for now, "it mostly works™".
-
-Also note that if no camera is found, or if more than one camera is found, the camera key will be remapped to Shift-Meta-R.
--->
-
 Turning the camera on and off is still a work in progress, so for now the "Toggle Camera" (*F10*) key is mapped to *Shift-Meta-R*. As for the "MyAsus" key (*F12*), it presents itself as *Shift-Meta-T*. The screenshot (*F11*) key is already mapped to *Shift-Meta-S*, so these seemed like reasonable values for the keys to the left and right of it.
 
 If the WMI keyboard can't be found, then all hope is lost and the programs quits.
@@ -99,6 +89,7 @@ Note that the keys are also function keys, so what happens when you press them d
 
 # TODO
 
+1. enable/disable camera on the fly (i.e. without reboot or restart app)
 1. camera file lock checking/syncing
 1. camera enabled indicator (not the same as the in-use light)
 
