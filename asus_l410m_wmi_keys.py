@@ -12,6 +12,7 @@ import fcntl
 import libevdev
 import logging
 import os
+import sys
 import time
 
 # set up logging
