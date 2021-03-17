@@ -26,6 +26,7 @@ logging.debug('Starting script')
 # find WMI keyboard
 wmi_kbd_found = False
 wmi_kbd_id = -1
+wmi_kbd = None
 
 # check if file exists
 if os.path.exists('/proc/bus/input/devices'):
@@ -71,20 +72,26 @@ if not wmi_kbd_found or wmi_kbd_id == -1:
     logging.debug('WMI keyboard not found, freaking out...')
     sys.exit(1)
 
-# grad the keyboard
+# try to connect to keyboard
 if os.path.exists('/dev/input/event' + str(wmi_kbd_id)):
 
     # open a file descriptor (pipe) for the WMI keyboard
     fd_wmi_kbd = open('/dev/input/event' + str(wmi_kbd_id), 'rb')
 
     # set file descriptor (pipe) to non-blocking
-    fcntl.fcntl(fd_wmi_kbd, fcntl.F_SETFL, os.O_NONBLOCK)
+    try:
+        fcntl.fcntl(fd_wmi_kbd, fcntl.F_SETFL, os.O_NONBLOCK)
+    except ValueError as err:
+        pass
 
     # get a device object (end point) for the file descriptor (pipe)
-    wmi_kbd = libevdev.Device(fd_wmi_kbd)
+    try:
+        wmi_kbd = libevdev.Device(fd_wmi_kbd)
+    except libevdev.device.InvalidFileError as err:
+        pass
 
 # no keyboard, no laundry
-else:
+if wmi_kbd == None:
     logging.debug('Could not open connection to keyboard, freaking out...')
     sys.exit(1)
 
