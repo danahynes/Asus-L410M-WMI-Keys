@@ -7,6 +7,9 @@
 # License : WTFPLv2                                              \          /  #
 #------------------------------------------------------------------------------#
 
+# install dependencies
+sudo apt-get install python3-libevdev
+
 # copy files to location
 sudo cp ./asus_l410m_wmi_keys.py /usr/bin
 sudo cp ./asus_l410m_wmi_keys.service /lib/systemd/system/
