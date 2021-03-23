@@ -23,204 +23,172 @@ logging.basicConfig(filename = '/var/log/asus_l410m_wmi_keys.log',
 logging.debug('---------------------------------------------------------------')
 logging.debug('Starting script')
 
-# find WMI keyboard
-wmi_kbd_found = False
-wmi_kbd_id = -1
-wmi_kbd = None
+#-------------------------------------------------------------------------------
+# helper functions
+#-------------------------------------------------------------------------------
 
-# check if file exists
-if os.path.exists('/proc/bus/input/devices'):
+# returns a libevdev device for the given name
+def get_device(device_name):
 
-    # read file
-    with open('/proc/bus/input/devices', 'r') as f:
-        lines = f.readlines()
+    # assume no device
+    device_found = False
+    device_id = -1
+    device = None
 
-        # walk through the file to find hotkeys device
-        for line in lines:
-            if 'NAME="ASUS WMI HOTKEYS"' in line.upper():
+    # check if file exists
+    if os.path.exists('/proc/bus/input/devices'):
 
-                # keep walking
-                wmi_kbd_found = True
-                continue
+        # read file
+        with open('/proc/bus/input/devices', 'r') as f:
+            lines = f.readlines()
 
-            # found WMI device
-            if wmi_kbd_found:
+            # walk through the file
+            for line in lines:
+                if device_name.upper() in line.upper():
 
-                # keep walking to find handlers line
-                if 'HANDLERS' in line.upper():
+                    # keep walking
+                    device_found = True
+                    continue
 
-                    # save everything after equals sign
-                    handlers = line.split('=')[-1]
+                # found keyboard
+                if device_found:
 
-                    # get array of handlers
-                    handler_array = handlers.split(' ')
+                    # keep walking to find handlers line
+                    if 'HANDLERS' in line.upper():
 
-                    # find event
-                    for handler in handler_array:
-                        if 'EVENT' in handler.upper():
-                            event = handler.upper().split('EVENT')
+                        # get array of handlers
+                        handlers = line.split('=')[-1]
 
-                            # save it
-                            wmi_kbd_id = event[-1]
-                            break
+                        # get array of handlers
+                        handler_array = handlers.split(' ')
 
-                    # no more to do here
-                    break
+                        # find event
+                        for handler in handler_array:
+                            if 'EVENT' in handler.upper():
+                                event = handler.upper().split('EVENT')
 
-# no keyboard, no laundry
-if not wmi_kbd_found or wmi_kbd_id == -1:
-    logging.debug('WMI keyboard not found, freaking out...')
+                                # save it
+                                device_id = event[-1]
+                                break
+
+                        # no more to do here
+                        break
+
+    # no device, no laundry
+    if not device_found or device_id == -1:
+        return None
+
+    # try to connect to device
+    if os.path.exists('/dev/input/event' + str(device_id)):
+
+        # create a file descriptor (pipe) for the keyboard
+        fd_device = open('/dev/input/event' + str(device_id), 'rb')
+
+        # set file descriptor (pipe) to non-blocking
+        try:
+            fcntl.fcntl(fd_device, fcntl.F_SETFL, os.O_NONBLOCK)
+        except ValueError as err:
+            logging.debug(str(err))
+            return None
+
+        # get a device object (end point) for the file descriptor (pipe)
+        try:
+            device = libevdev.Device(fd_device)
+        except libevdev.device.InvalidFileError as err:
+            logging.debug(str(err))
+            return None
+
+        # return found (or not found) device
+        return device
+
+#-------------------------------------------------------------------------------
+# Initialize
+#-------------------------------------------------------------------------------
+
+# get WMI keyboard
+wmi_keyboard = get_device('HOTKEYS')
+
+# no device, no laundry
+if wmi_keyboard == None:
+    logging.debug('Could not find WMI keyboard, freaking out...')
     sys.exit(1)
 
-# try to connect to keyboard
-if os.path.exists('/dev/input/event' + str(wmi_kbd_id)):
+#-------------------------------------------------------------------------------
+# THIS IS WHERE YOU ADD/EDIT UNMAPPED KEYS
+#-------------------------------------------------------------------------------
 
-    # open a file descriptor (pipe) for the WMI keyboard
-    fd_wmi_kbd = open('/dev/input/event' + str(wmi_kbd_id), 'rb')
+# map scancode to actual keystrokes
+key_wmi_camera = [
+    0x85,
+    libevdev.EV_KEY.KEY_LEFTSHIFT,
+    libevdev.EV_KEY.KEY_LEFTMETA,
+    libevdev.EV_KEY.KEY_R
+]
 
-    # set file descriptor (pipe) to non-blocking
-    try:
-        fcntl.fcntl(fd_wmi_kbd, fcntl.F_SETFL, os.O_NONBLOCK)
-    except ValueError as err:
-        pass
+# map scancode to actual keystrokes
+key_wmi_myasus = [
+    0x86,
+    libevdev.EV_KEY.KEY_LEFTSHIFT,
+    libevdev.EV_KEY.KEY_LEFTMETA,
+    libevdev.EV_KEY.KEY_T
+]
 
-    # get a device object (end point) for the file descriptor (pipe)
-    try:
-        wmi_kbd = libevdev.Device(fd_wmi_kbd)
-    except libevdev.device.InvalidFileError as err:
-        pass
+# array of all remapped keys
+keys_wmi = [
+    key_wmi_camera,
+    key_wmi_myasus
+]
 
-# no keyboard, no laundry
-if wmi_kbd == None:
-    logging.debug('Could not open connection to keyboard, freaking out...')
-    sys.exit(1)
+#-------------------------------------------------------------------------------
+# DONE
+#-------------------------------------------------------------------------------
 
-# create a fake keyboard for the keys
-dev_fake_kbd = libevdev.Device()
-dev_fake_kbd.name = 'Asus_L410M_WMI_Keys'
-dev_fake_kbd.enable(libevdev.EV_KEY.KEY_LEFTSHIFT)
-dev_fake_kbd.enable(libevdev.EV_KEY.KEY_LEFTMETA)
-dev_fake_kbd.enable(libevdev.EV_KEY.KEY_R)
-dev_fake_kbd.enable(libevdev.EV_KEY.KEY_T)
-fake_kbd = dev_fake_kbd.create_uinput_device()
+# create a fake keyboard to send keys
+# N.B. devices found using get_device() are read-only so create a new device
+# that we can write to
+dev_wmi_kbd = libevdev.Device()
+dev_wmi_kbd.name = 'Asus_L410M_WMI_Keys'
+for key in keys_wmi:
+    keys_to_enable = key[1:]
+    for key_to_enable in keys_to_enable:
+        dev_wmi_kbd.enable(key_to_enable)
+new_wmi_kbd = dev_wmi_kbd.create_uinput_device()
 
-# constants
-# TODO: find an easier way to get these besides dmesg
-KEY_WMI_CAMERA = 0x85
-KEY_WMI_MYASUS = 0x86
+#-------------------------------------------------------------------------------
+# Main loop
+#-------------------------------------------------------------------------------
 
-# main loop
 while True:
 
     # look at each event in the wmi keyboard pipe
-    for event in wmi_kbd.events():
+    for e in wmi_keyboard.events():
 
-        # if it's the camera key
-        if event.value == KEY_WMI_CAMERA:
-            logging.debug('Camera key pressed')
-            try:
+        # loop through our keys
+        for key in keys_wmi:
 
-                # press Shift
-                events = [
-                    libevdev.InputEvent(libevdev.EV_KEY.KEY_LEFTSHIFT, 1),
-                    libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
-                ]
-                fake_kbd.send_events(events)
+            # if it's one of ours
+            if (e.value == key[0]):
 
-                # press Meta
-                events = [
-                    libevdev.InputEvent(libevdev.EV_KEY.KEY_LEFTMETA, 1),
-                    libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
-                ]
-                fake_kbd.send_events(events)
+                # get the mapped keystrokes to send
+                keys_to_send = key[1:]
 
-                # press R
-                events = [
-                    libevdev.InputEvent(libevdev.EV_KEY.KEY_R, 1),
-                    libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
-                ]
-                fake_kbd.send_events(events)
+                # for each key, send
+                for key_to_send in keys_to_send:
+                    events = [
+                        libevdev.InputEvent(key_to_send, 1),
+                        libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
+                    ]
+                    new_wmi_kbd.send_events(events)
 
-                # release R
-                events = [
-                    libevdev.InputEvent(libevdev.EV_KEY.KEY_R, 0),
-                    libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
-                ]
-                fake_kbd.send_events(events)
+                # for each key in reverse, release it
+                for key_to_send in reversed(keys_to_send):
+                    events = [
+                        libevdev.InputEvent(key_to_send, 0),
+                        libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
+                    ]
+                    new_wmi_kbd.send_events(events)
 
-                # release Meta
-                events = [
-                    libevdev.InputEvent(libevdev.EV_KEY.KEY_LEFTMETA, 0),
-                    libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
-                ]
-                fake_kbd.send_events(events)
-
-                # release Shift
-                events = [
-                    libevdev.InputEvent(libevdev.EV_KEY.KEY_LEFTSHIFT, 0),
-                    libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
-                ]
-                fake_kbd.send_events(events)
-            except OSError as err:
-                logging.debug(str(err))
-
-        # if it's the "MyAsus" key
-        elif event.value == KEY_WMI_MYASUS:
-            logging.debug('MyAsus key pressed')
-            try:
-
-                # press Shift
-                events = [
-                    libevdev.InputEvent(libevdev.EV_KEY.KEY_LEFTSHIFT, 1),
-                    libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
-                ]
-                fake_kbd.send_events(events)
-
-                # press Meta
-                events = [
-                    libevdev.InputEvent(libevdev.EV_KEY.KEY_LEFTMETA, 1),
-                    libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
-                ]
-                fake_kbd.send_events(events)
-
-                # press T
-                events = [
-                    libevdev.InputEvent(libevdev.EV_KEY.KEY_T, 1),
-                    libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
-                ]
-                fake_kbd.send_events(events)
-
-                # release T
-                events = [
-                    libevdev.InputEvent(libevdev.EV_KEY.KEY_T, 0),
-                    libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
-                ]
-                fake_kbd.send_events(events)
-
-                # release Meta
-                events = [
-                    libevdev.InputEvent(libevdev.EV_KEY.KEY_LEFTMETA, 0),
-                    libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
-                ]
-                fake_kbd.send_events(events)
-
-                # release Shift
-                events = [
-                    libevdev.InputEvent(libevdev.EV_KEY.KEY_LEFTSHIFT, 0),
-                    libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
-                ]
-                fake_kbd.send_events(events)
-            except OSError as err:
-                logging.debug(str(err))
-
-        # not our key
-        else:
-            pass
-
-    # don't eat all cpu!
+    # give somebody else a chance will ya!
     time.sleep(0.1)
-
-# close file descriptor (pipe) we opened
-fd_wmi_kbd.close()
 
 # -)
