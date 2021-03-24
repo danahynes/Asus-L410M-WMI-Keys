@@ -117,9 +117,12 @@ if wmi_keyboard == None:
 # THIS IS WHERE YOU ADD/EDIT UNMAPPED KEYS
 #-------------------------------------------------------------------------------
 
+KEY_WMI_CAMERA = 0x85
+KEY_WMI_MYASUS = 0x86
+
 # map scancode to actual keystrokes
 key_wmi_camera = [
-    0x85,
+    KEY_WMI_CAMERA,
     libevdev.EV_KEY.KEY_LEFTSHIFT,
     libevdev.EV_KEY.KEY_LEFTMETA,
     libevdev.EV_KEY.KEY_R
@@ -127,7 +130,7 @@ key_wmi_camera = [
 
 # map scancode to actual keystrokes
 key_wmi_myasus = [
-    0x86,
+    KEY_WMI_MYASUS,
     libevdev.EV_KEY.KEY_LEFTSHIFT,
     libevdev.EV_KEY.KEY_LEFTMETA,
     libevdev.EV_KEY.KEY_T
@@ -164,13 +167,13 @@ while True:
     for e in wmi_keyboard.events():
 
         # loop through our keys
-        for key in keys_wmi:
+        for key_wmi in keys_wmi:
 
             # if it's one of ours
-            if (e.value == key[0]):
+            if (e.value == key_wmi[0]):
 
                 # get the mapped keystrokes to send
-                keys_to_send = key[1:]
+                keys_to_send = key_wmi[1:]
 
                 # for each key, send
                 for key_to_send in keys_to_send:
@@ -179,6 +182,9 @@ while True:
                         libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
                     ]
                     new_wmi_kbd.send_events(events)
+
+                    # pause a bit between pressing keys
+                    time.sleep(0.2)
 
                 # for each key in reverse, release it
                 for key_to_send in reversed(keys_to_send):
