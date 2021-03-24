@@ -49,6 +49,8 @@ foo@bar:~/Downloads/Asus_L410M_WMI_Keys$ sudo ./uninstall.sh
 
 or delete the files manually:
 ```bash
+foo@bar:~$ sudo systemctl stop asus_l410m_wmi_keys
+foo@bar:~$ sudo systemctl disable asus_l410m_wmi_keys
 foo@bar:~$ sudo rm -rf /usr/bin/asus_l410m_wmi_keys.py
 foo@bar:~$ sudo rm -rf /lib/systemd/system/asus_l410m_wmi_keys.service
 foo@bar:~$ sudo rm -rf /var/log//asus_l410m_wmi_keys.log
