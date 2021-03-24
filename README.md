@@ -76,10 +76,16 @@ must be written as 0x85.
 
 Use these values in *asus_l410m_wmi_keys.py* to fire events for your unused
 keys. Find the section labeled with a comment of "THIS IS WHERE YOU ADD/EDIT
-UNMAPPED KEYS" and add an array in the format:
+UNMAPPED KEYS" and add a constant:
+```bash
+KEY_WMI_<SOMENAME> = 0x<SCANCODE>
+```
+
+and add an array in the format:
+
 ```python3
 key_wmi_<somename> = [
-  <scancode>,
+  KEY_WMI_<SOMENAME>,
   libevdev.EV_KEY.<key_constant>,
   ...
 ]
