@@ -33,7 +33,7 @@ before you install.
 
 Once you do that, you can install by:
 ```bash
-foo@bar:~/Downloads/Asus_L410M_WMI_Keys$ sudo ./install.sh
+foo@bar:~/Downloads/Asus_L410M_WMI_Keys$ ./install.sh
 ```
 You can also download the
 [latest release](http://github.com/danahynes/Asus_L410M_WMI_Keys/releases/latest),
@@ -44,7 +44,7 @@ install.sh file as *sudo* from there.
 
 To uninstall, go to the git directory and run:
 ```bash
-foo@bar:~/Downloads/Asus_L410M_WMI_Keys$ sudo ./uninstall.sh
+foo@bar:~/Downloads/Asus_L410M_WMI_Keys$ ./uninstall.sh
 ```
 
 or delete the files manually:
@@ -86,7 +86,7 @@ and add an array in the format:
 ```python3
 key_wmi_<somename> = [
   KEY_WMI_<SOMENAME>,
-  libevdev.EV_KEY.<key_constant>,
+  libevdev.EV_KEY.<KEY_CONSTANT>,
   ...
 ]
 
