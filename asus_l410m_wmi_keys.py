@@ -175,24 +175,31 @@ while True:
                 # get the mapped keystrokes to send
                 keys_to_send = key_wmi[1:]
 
-                # for each key, send
+                # for each key, send the "key down" message
                 for key_to_send in keys_to_send:
                     events = [
-                        libevdev.InputEvent(key_to_send, 1),
-                        libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
+                        libevdev.InputEvent(key_to_send, 1)
                     ]
                     new_wmi_kbd.send_events(events)
 
-                    # pause a bit between pressing keys
-                    time.sleep(0.2)
+                    # pause a bit between keys
+                    time.sleep(0.1)
 
                 # for each key in reverse, release it
                 for key_to_send in reversed(keys_to_send):
                     events = [
-                        libevdev.InputEvent(key_to_send, 0),
-                        libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
+                        libevdev.InputEvent(key_to_send, 0)
                     ]
                     new_wmi_kbd.send_events(events)
+
+                    # pause a bit between keys
+                    time.sleep(0.1)
+
+                # send the "event complete" message
+                events = [
+                    libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT, 0)
+                ]
+                new_wmi_kbd.send_events(events)
 
     # give somebody else a chance will ya!
     time.sleep(0.1)
