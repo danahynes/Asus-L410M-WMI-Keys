@@ -107,7 +107,8 @@ faster and easier IMHO, so I won't explain it here.
 # Notes
 
 I banged my head against a wall for a few hours until I found a solution to
-this. At first I thought the asus-nb-wmi driver was swallowing events for keys
+this. At first I thought the  
+asus-nb-wmi driver was swallowing events for keys
 it did not recognize (actually some programs, like *xev*, could see them being
 pressed and released but they just had 0x0 scancodes). But then I realized the
 asus-nb-wmi driver was logging them in *dmesg* as "unknown" keys, but with
