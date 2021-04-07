@@ -18,7 +18,4 @@ sudo rm -rf /usr/bin/asus_l410m_wmi_keys.py
 sudo rm -rf /lib/systemd/system/asus_l410m_wmi_keys.service
 sudo rm -rf /var/log//asus_l410m_wmi_keys.log
 
-# remove dependencies
-#sudo apt-get remove python3-libevdev
-
 # -)
