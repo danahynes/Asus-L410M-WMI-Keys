@@ -147,7 +147,7 @@ keys_wmi = [
 #-------------------------------------------------------------------------------
 
 # create a fake keyboard to send keys
-# N.B. devices found using get_device() are read-only so create a new device
+# NB: devices found using get_device() are read-only so create a new device
 # that we can write to
 dev_wmi_kbd = libevdev.Device()
 dev_wmi_kbd.name = 'Asus_L410M_WMI_Keys'
